@@ -30,7 +30,10 @@ env:
 #      env: IMAGEMAGICK_VERSION=6.8.7-0
 
 before_script:
-    - bash ./imagemagick_dependency.sh "${IMAGEMAGICK_VERSION}"
+    - pwd
+    # - bash ./imagemagick_dependency.sh "${IMAGEMAGICK_VERSION}"
+    - for i in ./imagick/*.go; do echo $i; done
+    - for i in ./examples/*.go; do echo $i; done
 
 script:
     - go get -t -v ./...
