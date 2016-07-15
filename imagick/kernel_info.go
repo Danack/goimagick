@@ -6,8 +6,6 @@ package imagick
 
 /*
 #include <magick/MagickCore.h>
-#include <magick/geometry.h>
-#include <magick/morphology.h>
 */
 import "C"
 
@@ -49,14 +47,16 @@ func (kernel_info *KernelInfo) ToArray() [][]float64 {
 // Create a kernel from a builtin in kernel. See http://www.imagemagick.org/Usage/morphology/#kernel
 // for examples. Currently the 'rotation' symbols are not supported. Example:
 // kernel_info := imagick.AcquireKernelBuiltIn(imagick.KERNEL_RING, "2,1")
-func AcquireKernelBuiltIn(kernel_type KernelInfoType, kernelString string) *KernelInfo {
-	geometry_info := (*GeometryInfo)(C.malloc(C.size_t(unsafe.Sizeof(C.GeometryInfo{}))))
-	result := C.ParseGeometry(C.CString(kernelString), &geometry_info.gi)
-	var geometry_flags int = int(result)
-	FiddleWithGeometryInfo(kernel_type, geometry_flags, geometry_info)
-	kernel_info := C.AcquireKernelBuiltIn(C.KernelInfoType(kernel_type), &geometry_info.gi)
+func AcquireKernelBuiltIn(kernelType KernelInfoType, kernelString string) *KernelInfo {
+	gi := C.GeometryInfo{}
+	cKernelString := C.CString(kernelString)
+	defer C.free(unsafe.Pointer(cKernelString))
+	result := C.ParseGeometry(cKernelString, &gi)
+	var geometryFlags int = int(result)
+	FiddleWithGeometryInfo(kernelType, geometryFlags, &gi)
+	kernelInfo := C.AcquireKernelBuiltIn(C.KernelInfoType(kernelType), &gi)
 
-	return newKernelInfo(kernel_info)
+	return newKernelInfo(kernelInfo)
 }
 
 // ScaleKernelInfo() scales the given kernel list by the given amount, with or without
@@ -73,17 +73,13 @@ func (kernel_info *KernelInfo) Scale(scale float64, normalize_type KernelNormali
 }
 
 // This does .....stuff. Basically some tidy up of the kernel is required apparently.
-func FiddleWithGeometryInfo(kernel_type KernelInfoType, geometry_flags int, geometry_info *GeometryInfo) {
-
+func FiddleWithGeometryInfo(kernelType KernelInfoType, geometryFlags int, geometryInfo *C.GeometryInfo) {
 	/* special handling of missing values in input string */
-	switch kernel_type {
+	switch kernelType {
 	/* Shape Kernel Defaults */
 	case KERNEL_UNITY:
-		{
-			if (geometry_flags & WIDTHVALUE) == 0 {
-				geometry_info.gi.rho = 1.0 /* Default scale = 1.0, zero is valid */
-			}
-			break
+		if (geometryFlags & WIDTHVALUE) == 0 {
+			geometryInfo.rho = 1.0 /* Default scale = 1.0, zero is valid */
 		}
 	case KERNEL_SQUARE:
 	case KERNEL_DIAMOND:
@@ -91,60 +87,43 @@ func FiddleWithGeometryInfo(kernel_type KernelInfoType, geometry_flags int, geom
 	case KERNEL_DISK:
 	case KERNEL_PLUS:
 	case KERNEL_CROSS:
-		{
-			if (geometry_flags & HEIGHTVALUE) == 0 {
-				geometry_info.gi.sigma = 1.0 /* Default scale = 1.0, zero is valid */
-			}
-			break
+		if (geometryFlags & HEIGHTVALUE) == 0 {
+			geometryInfo.sigma = 1.0 /* Default scale = 1.0, zero is valid */
 		}
 	case KERNEL_RING:
-		{
-			if (geometry_flags & XVALUE) == 0 {
-				geometry_info.gi.xi = 1.0 /* Default scale = 1.0, zero is valid */
-			}
-			break
+		if (geometryFlags & XVALUE) == 0 {
+			geometryInfo.xi = 1.0 /* Default scale = 1.0, zero is valid */
 		}
 	case KERNEL_RECTANGLE:
-		{ /* Rectangle - set size defaults */
-			if (geometry_flags & WIDTHVALUE) == 0 { /* if no width then */
-				geometry_info.gi.rho = geometry_info.gi.sigma /* then  width = height */
-			}
-			if geometry_info.gi.rho < 1.0 { /* if width too small */
-				geometry_info.gi.rho = 3 /* then  width = 3 */
-			}
-			if geometry_info.gi.sigma < 1.0 { /* if height too small */
-				geometry_info.gi.sigma = geometry_info.gi.rho /* then  height = width */
-			}
-			//TODO - casting shenanigans
-			//if ((geometry_flags & XVALUE) == 0) {    /* center offset if not defined */
-			//	geometry_info.gi.xi = (double)(((ssize_t)geometry_info.gi.rho-1)/2);
-			//}
-			//if ((geometry_flags & YVALUE) == 0) {
-			//	geometry_info.gi.psi = (double)(((ssize_t)geometry_info.gi.sigma-1)/2);
-			//}
-			break
+		/* Rectangle - set size defaults */
+		if (geometryFlags & WIDTHVALUE) == 0 { /* if no width then */
+			geometryInfo.rho = geometryInfo.sigma /* then  width = height */
+		}
+		if geometryInfo.rho < 1.0 { /* if width too small */
+			geometryInfo.rho = 3 /* then  width = 3 */
+		}
+		if geometryInfo.sigma < 1.0 { /* if height too small */
+			geometryInfo.sigma = geometryInfo.rho /* then  height = width */
+		}
+		if ((geometryFlags & XVALUE) == 0) {    /* center offset if not defined */
+			geometryInfo.xi = C.double((int(geometryInfo.rho)-1)/2);
+		}
+		if ((geometryFlags & YVALUE) == 0) {
+			geometryInfo.psi = C.double((int(geometryInfo.sigma)-1)/2);
 		}
 	/* Distance Kernel Defaults */
 	case KERNEL_CHEBYSHEV:
 	case KERNEL_MANHATTAN:
 	case KERNEL_OCTAGONAL:
 	case KERNEL_EUCLIDEAN:
-		{
-			if (geometry_flags & HEIGHTVALUE) == 0 { /* no distance scale */
-				geometry_info.gi.sigma = 100.0 /* default distance scaling */
-			}
-			//TODO casting shenanigans
-			//else if ((flags & AspectValue ) != 0) {     /* '!' flag */
-			//	geometry_info.gi.sigma = QuantumRange/(geometry_info.gi.sigma+1); /* maximum pixel distance */
-			//}
-			//else if ((flags & PercentValue ) != 0) {    /* '%' flag */
-			//	geometry_info.gi.sigma *= QuantumRange/100.0;         /* percentage of color range */
-			//}
-			break
+		if (geometryFlags & HEIGHTVALUE) == 0 { /* no distance scale */
+			geometryInfo.sigma = 100.0 /* default distance scaling */
+		} else if (geometryFlags & ASPECTVALUE) != 0 {     /* '!' flag */
+			geometryInfo.sigma = QUANTUM_RANGE / (geometryInfo.sigma+1) /* maximum pixel distance */
+		}
+		else if (geometryFlags & PERCENTVALUE) != 0 {    /* '%' flag */
+			geometryInfo.sigma *= QUANTUM_RANGE / 100.0         /* percentage of color range */
 		}
 	default:
-		{
-			break
-		}
 	}
 }
