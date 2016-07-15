@@ -1,6 +1,6 @@
 sudo: false
 language: go
-go_import_path: gographics/imagick.v2
+go_import_path: gopkg.in/gographics/imagick.v2/imagick
 go:
  - 1.6
  #- 1.5
