@@ -26,6 +26,8 @@ env:
 #      env: IMAGEMAGICK_VERSION=6.8.7-0
 before_install:
     - bash ./imagemagick_dependency.sh "${IMAGEMAGICK_VERSION}"
+    - pkg-config --cflags --libs MagickWand
+    - convert --version
 
 # debugging why this is borked.
 install:
