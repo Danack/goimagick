@@ -30,9 +30,9 @@ before_install:
     - convert --version
     - pkg-config --cflags --libs MagickWand
     - echo "PKG_CONFIG_DIR ${PKG_CONFIG_DIR}"
-    - ls -l "/home/travis/im/${IMAGEMAGICK_VERSION}/lib"
-    - ls -l "/home/travis/im/${IMAGEMAGICK_VERSION}/lib/pkgconfig"
-    - export PKG_CONFIG_PATH="/home/travis/im/${IMAGEMAGICK_VERSION}/lib/pkgconfig:${PKG_CONFIG_PATH}"
+    - ls -l "/home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/lib"
+    - ls -l "/home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/lib/pkgconfig"
+    - export PKG_CONFIG_PATH="/home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/lib/pkgconfig:${PKG_CONFIG_PATH}"
     - echo "PKG_CONFIG_DIR ${PKG_CONFIG_DIR}"
     - pkg-config --cflags --libs MagickWand
     - echo ""
