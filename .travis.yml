@@ -1,4 +1,4 @@
-sudo: true
+sudo: false
 language: go
 go_import_path: gopkg.in/gographics/imagick.v2
 go:
@@ -29,7 +29,11 @@ before_install:
     - echo "ImageMagick version - ${IMAGEMAGICK_VERSION}"
     - convert --version
     - pkg-config --cflags --libs MagickWand
+    - echo "PKG_CONFIG_DIR ${PKG_CONFIG_DIR}"
+    - ls -l "/home/travis/im/${IMAGEMAGICK_VERSION}/lib"
+    - ls -l "/home/travis/im/${IMAGEMAGICK_VERSION}/lib/pkgconfig"
     - export PKG_CONFIG_PATH="/home/travis/im/${IMAGEMAGICK_VERSION}/lib/pkgconfig:${PKG_CONFIG_PATH}"
+    - echo "PKG_CONFIG_DIR ${PKG_CONFIG_DIR}"
     - pkg-config --cflags --libs MagickWand
     - echo ""
 
