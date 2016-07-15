@@ -120,8 +120,7 @@ func FiddleWithGeometryInfo(kernelType KernelInfoType, geometryFlags int, geomet
 			geometryInfo.sigma = 100.0 /* default distance scaling */
 		} else if (geometryFlags & ASPECTVALUE) != 0 {     /* '!' flag */
 			geometryInfo.sigma = QUANTUM_RANGE / (geometryInfo.sigma+1) /* maximum pixel distance */
-		}
-		else if (geometryFlags & PERCENTVALUE) != 0 {    /* '%' flag */
+		} else if (geometryFlags & PERCENTVALUE) != 0 {    /* '%' flag */
 			geometryInfo.sigma *= QUANTUM_RANGE / 100.0         /* percentage of color range */
 		}
 	default:
