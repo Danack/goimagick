@@ -36,23 +36,23 @@ before_install:
     - echo "PKG_CONFIG_DIR ${PKG_CONFIG_DIR}"
     - pkg-config --cflags --libs MagickWand
     - echo ""
+    - export CGO_CFLAGS="-DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/include/ImageMagick-6"
+    - export CGO_LDFLAGS="-L/home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/lib -lMagickWand-6.Q16 -lMagickCore-6.Q16"
+
 
 # debugging why this is borked.
 install:
     - convert --version
 
-# GOPATH
+
 before_script:
-    - echo "this is the before"
     - pwd
-    - for i in ./imagick/*.go; do echo $i; done
-    - for i in ./examples/*.go; do echo $i; done
+    - for i in $GOPATH/gopkg.in/gographics/imagick.v2/imagick/*.go; do echo $i; done
+    - for i in $GOPATH/gopkg.in/gographics/imagick.v2/imagick/examples/*.go; do echo $i; done
     
 
 script:
-    #- go get -t -v ./...
-    # - go test -v
-    # - go test -v ./...
+    - go test -tags no_pkgconfig -v ./...
     # - go vet ./...    
 
 matrix:
