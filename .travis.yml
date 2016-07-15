@@ -1,4 +1,4 @@
-sudo: false
+sudo: true
 language: go
 go_import_path: gopkg.in/gographics/imagick.v2
 go:
@@ -26,11 +26,16 @@ env:
 #      env: IMAGEMAGICK_VERSION=6.8.7-0
 before_install:
     - bash ./imagemagick_dependency.sh "${IMAGEMAGICK_VERSION}"
-    - pkg-config --cflags --libs MagickWand
+    - echo "ImageMagick version - ${IMAGEMAGICK_VERSION}"
     - convert --version
+    - pkg-config --cflags --libs MagickWand
+    - export PKG_CONFIG_PATH="/home/travis/im/${IMAGEMAGICK_VERSION}/lib/pkgconfig:${PKG_CONFIG_PATH}"
+    - pkg-config --cflags --libs MagickWand
+    - echo ""
 
 # debugging why this is borked.
 install:
+    - convert --version
 
 # GOPATH
 before_script:
