@@ -52,6 +52,9 @@ before_script:
 
 
 script:
+    - cd $GOPATH/gopkg.in/gographics/imagick.v2/imagick/examples/morphology
+    - go build -tags no_pkgconfig -v main.go
+    - ./main
     - go test -tags no_pkgconfig -v ./...
     # - go vet ./...    
 
