@@ -29,9 +29,7 @@ env:
 #    - php: 5.3
 #      env: IMAGEMAGICK_VERSION=6.8.7-0
 
-
-#before_script:
-#    - for file in tests/*.phpt; do grep $(basename $file) package.xml >/dev/null || (echo "Missing $file from package.xml" ; exit 1); done
+before_script:
     - bash ./imagemagick_dependency.sh "${IMAGEMAGICK_VERSION}"
 
 script:
