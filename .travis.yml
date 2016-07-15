@@ -1,17 +1,13 @@
 sudo: false
 language: go
-install:
-
+go_import_path: gographics/imagick.v2
 go:
  - 1.6
  #- 1.5
  #- 1.4
-
-sudo: false
 cache:
     directories:
         - $HOME/im
-
 env:
     #- IMAGEMAGICK_VERSION=git7
     #- IMAGEMAGICK_VERSION=git6
@@ -29,6 +25,7 @@ env:
 #    - php: 5.3
 #      env: IMAGEMAGICK_VERSION=6.8.7-0
 
+# GOPATH
 before_script:
     - echo "this is the before"
     - pwd
@@ -38,8 +35,9 @@ before_script:
 
 script:
     #- go get -t -v ./...
-    - go test -v
-    
+    # - go test -v
+    - go test -v ./...
+    # - go vet ./...    
 
 matrix:
   allow_failures:
