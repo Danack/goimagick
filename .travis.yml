@@ -24,6 +24,8 @@ env:
 #  exclude:
 #    - php: 5.3
 #      env: IMAGEMAGICK_VERSION=6.8.7-0
+before_install:
+    - bash ./imagemagick_dependency.sh "${IMAGEMAGICK_VERSION}"
 
 # GOPATH
 before_script:
@@ -31,7 +33,7 @@ before_script:
     - pwd
     - for i in ./imagick/*.go; do echo $i; done
     - for i in ./examples/*.go; do echo $i; done
-    # - bash ./imagemagick_dependency.sh "${IMAGEMAGICK_VERSION}"
+    
 
 script:
     #- go get -t -v ./...
