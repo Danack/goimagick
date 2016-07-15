@@ -47,9 +47,9 @@ install:
 
 before_script:
     - pwd
-    - for i in $GOPATH/gopkg.in/gographics/imagick.v2/imagick/*.go; do echo $i; done
-    - for i in $GOPATH/gopkg.in/gographics/imagick.v2/imagick/examples/*.go; do echo $i; done
-    
+    - for i in $GOPATH/gopkg.in/gographics/imagick.v2/imagick/*.go; do gofmt -l $i; echo $?; done
+    - for i in $GOPATH/gopkg.in/gographics/imagick.v2/imagick/examples/*.go; do gofmt -l $i 2>/dev/null; echo $?; done
+
 
 script:
     - go test -tags no_pkgconfig -v ./...
