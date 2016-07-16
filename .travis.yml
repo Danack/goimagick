@@ -28,16 +28,11 @@ before_install:
     - bash ./imagemagick_dependency.sh "${IMAGEMAGICK_VERSION}"
     - echo "ImageMagick version - ${IMAGEMAGICK_VERSION}"
     - convert --version
-    - pkg-config --cflags --libs MagickWand
-    - echo "PKG_CONFIG_DIR ${PKG_CONFIG_DIR}"
-    - ls -l "/home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/lib"
-    - ls -l "/home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/lib/pkgconfig"
     - export PKG_CONFIG_PATH="/home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/lib/pkgconfig:${PKG_CONFIG_PATH}"
     - echo "PKG_CONFIG_DIR ${PKG_CONFIG_DIR}"
     - pkg-config --cflags --libs MagickWand
-    - echo ""
-    - export CGO_CFLAGS="-DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/include/ImageMagick-6"
-    - export CGO_LDFLAGS="-L/home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/lib -lMagickWand-6.Q16 -lMagickCore-6.Q16"
+    
+
 
 
 # debugging why this is borked.
@@ -47,12 +42,11 @@ install:
 
 before_script:
     - pwd
-    - for i in $GOPATH/gopkg.in/gographics/imagick.v2/imagick/*.go; do gofmt -l $i; echo $?; done
-    - for i in $GOPATH/gopkg.in/gographics/imagick.v2/imagick/examples/*.go; do gofmt -l $i 2>/dev/null; echo $?; done
-
+    - for i in $GOPATH/src/gopkg.in/gographics/imagick.v2/imagick/*.go; do gofmt -l $i; echo $?; done
+    - for i in $GOPATH/src/gopkg.in/gographics/imagick.v2/imagick/examples/*.go; do gofmt -l $i 2>/dev/null; echo $?; done
 
 script:
-    - cd $GOPATH/gopkg.in/gographics/imagick.v2/imagick/examples/morphology
+    - cd $GOPATH/src/gopkg.in/gographics/imagick.v2/imagick/examples/morphology
     - ls -l
     - go build -tags no_pkgconfig -ldflags "-r /home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/lib" -v main.go
     - ./main
