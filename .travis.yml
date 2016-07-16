@@ -42,7 +42,9 @@ install:
 
 before_script:
     - pwd
-    - for i in $GOPATH/src/gopkg.in/gographics/imagick.v2/imagick/*.go; do gofmt -l $i; echo $?; done
+    - ls -l /home/travis/gopath
+    - ls -l /home/travis/gopath/src
+    - for i in $GOPATH/src/gopkg.in/gographics/imagick.v2/imagick/*.go; do  echo "checking ${i}"; gofmt -l $i; echo $?; done
     - for i in $GOPATH/src/gopkg.in/gographics/imagick.v2/imagick/examples/*.go; do gofmt -l $i 2>/dev/null; echo $?; done
 
 script:
