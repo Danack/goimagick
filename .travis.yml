@@ -35,16 +35,15 @@ before_install:
 # debugging why this is borked.
 install:
     - convert --version
-
-
+ 
 before_script:
     - pwd
     - echo "GOPATH is ${GOPATH}"
     - for i in $GOPATH/src/gopkg.in/gographics/imagick.v2/imagick/*.go; do  echo "checking ${i}"; gofmt -l $i; echo $?; done
-    - for i in $GOPATH/src/gopkg.in/gographics/imagick.v2/imagick/examples/*.go; do gofmt -l $i 2>/dev/null; echo $?; done
+    - for i in $GOPATH/src/gopkg.in/gographics/imagick.v2/examples/*.go; do gofmt -l $i 2>/dev/null; echo $?; done
 
 script:
-    - cd $GOPATH/src/gopkg.in/gographics/imagick.v2/imagick/examples/morphology
+    - cd $GOPATH/src/gopkg.in/gographics/imagick.v2/examples/morphology
     - ls -l
     - go build -ldflags "-r /home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/lib" -v main.go
     - ./main
