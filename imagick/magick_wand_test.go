@@ -112,20 +112,20 @@ func TestQueryFormats(t *testing.T) {
 	}
 }
 
-func TestDeleteImageArtifact(t *testing.T) {
-	Initialize()
-	defer func(t *testing.T) {
-		checkGC(t)
-	}(t)
-	defer Terminate()
-
-	mw := NewMagickWand()
-	mw.ReadImage(`logo:`)
-
-	if err := mw.DeleteImageArtifact("*"); err != nil {
-		t.Fatalf("Error calling DeleteImageArtifact: %s", err.Error())
-	}
-}
+//func TestDeleteImageArtifact(t *testing.T) {
+//	Initialize()
+//	defer func(t *testing.T) {
+//		checkGC(t)
+//	}(t)
+//	defer Terminate()
+//
+//	mw := NewMagickWand()
+//	mw.ReadImage(`logo:`)
+//
+//	if err := mw.DeleteImageArtifact("*"); err != nil {
+//		t.Fatalf("Error calling DeleteImageArtifact: %s", err.Error())
+//	}
+//}
 
 func TestReadImageBlob(t *testing.T) {
 	Initialize()
