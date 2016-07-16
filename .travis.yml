@@ -25,15 +25,12 @@ env:
 #    - php: 5.3
 #      env: IMAGEMAGICK_VERSION=6.8.7-0
 before_install:
-    - bash ./imagemagick_dependency.sh "${IMAGEMAGICK_VERSION}"
     - echo "ImageMagick version - ${IMAGEMAGICK_VERSION}"
+    - bash ./imagemagick_dependency.sh "${IMAGEMAGICK_VERSION}"  
     - convert --version
     - export PKG_CONFIG_PATH="/home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/lib/pkgconfig:${PKG_CONFIG_PATH}"
     - echo "PKG_CONFIG_DIR ${PKG_CONFIG_DIR}"
     - pkg-config --cflags --libs MagickWand
-    
-
-
 
 # debugging why this is borked.
 install:
@@ -42,18 +39,17 @@ install:
 
 before_script:
     - pwd
-    - ls -l /home/travis/gopath
-    - ls -l /home/travis/gopath/src
+    - echo "GOPATH is ${GOPATH}"
     - for i in $GOPATH/src/gopkg.in/gographics/imagick.v2/imagick/*.go; do  echo "checking ${i}"; gofmt -l $i; echo $?; done
     - for i in $GOPATH/src/gopkg.in/gographics/imagick.v2/imagick/examples/*.go; do gofmt -l $i 2>/dev/null; echo $?; done
 
 script:
     - cd $GOPATH/src/gopkg.in/gographics/imagick.v2/imagick/examples/morphology
     - ls -l
-    - go build -tags no_pkgconfig -ldflags "-r /home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/lib" -v main.go
+    - go build -ldflags "-r /home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/lib" -v main.go
     - ./main
     - cd $GOPATH
-    - go test -tags no_pkgconfig -ldflags "-r /home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/lib" -v ./...
+    - go test -ldflags "-r /home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/lib" -v ./...
 
 
 matrix:
