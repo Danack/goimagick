@@ -53,10 +53,12 @@ before_script:
 
 script:
     - cd $GOPATH/gopkg.in/gographics/imagick.v2/imagick/examples/morphology
-    - go build -tags no_pkgconfig -v main.go
+    - ls -l
+    - go build -tags no_pkgconfig -ldflags "-r /home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/lib" -v main.go
     - ./main
-    - go test -tags no_pkgconfig -v ./...
-    # - go vet ./...    
+    - cd $GOPATH
+    - go test -tags no_pkgconfig -ldflags "-r /home/travis/im/imagemagick-${IMAGEMAGICK_VERSION}/lib" -v ./...
+
 
 matrix:
   allow_failures:
